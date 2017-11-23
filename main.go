@@ -6,6 +6,7 @@ import (
   "github.com/jinzhu/configor"
   "github.com/fatih/color"
   "net/http"
+  "os"
   "log"
   "encoding/json"
   jsonSchema "github.com/lestrrat/go-jsschema"
@@ -43,24 +44,26 @@ func main() {
   }
 
   for _ = range testbook.Tests {
-    <-done
+    if ok := <-done; ok == false {
+      defer os.Exit(1)
+    }
   }
 }
 
 func test(test Test, host string, schema string, done chan bool) {
-  resp, err := http.Get(fmt.Sprintf("%s://%s%s", schema, host, test.Url));
+  res, err := http.Get(fmt.Sprintf("%s://%s%s", schema, host, test.Url));
 
   if err != nil {
-    log.Printf("%s%s %s", red("❌"), red(test.Url), err);
-    done <- true
+    log.Printf("%s%s %s", red("✗"), red(test.Url), err);
+    done <- false
     return
   }
 
   if(test.Should.HaveStatus != 0) {
 
-    if resp.StatusCode != test.Should.HaveStatus {
-      log.Printf("%s%s %s", red("❌"), red(test.Url), fmt.Sprintf("status code %s was expected but got %s instead", yellow(test.Should.HaveStatus), yellow(resp.StatusCode)));
-      done <- true
+    if res.StatusCode != test.Should.HaveStatus {
+      log.Printf("%s%s %s", red("✗"), red(test.Url), fmt.Sprintf("status code %s was expected but got %s instead", yellow(test.Should.HaveStatus), yellow(res.StatusCode)));
+      done <- false
       return
     }
   }
@@ -69,8 +72,8 @@ func test(test Test, host string, schema string, done chan bool) {
   if(test.Should.MatchJsonSchema != "") {
     s, err := jsonSchema.ReadFile(test.Should.MatchJsonSchema);
     if err != nil {
-      log.Printf("%s%s %s", red("❌"), red(test.Url), err);
-      done <- true
+      log.Printf("%s %s %s", red("✗"), red(test.Url), err);
+      done <- false
       return
     }
 
@@ -78,17 +81,17 @@ func test(test Test, host string, schema string, done chan bool) {
     v, err := b.Build(s);
 
     if err != nil {
-      log.Printf("%s%s %s", red("❌"), red(test.Url), err);
-      done <- true
+      log.Printf("%s %s %s", red("✗"), red(test.Url), err);
+      done <- false
       return
     }
 
     var input interface{};
-    json.Unmarshal([]byte("{\"name\":\"john\",\"age\":22,\"class\":\"mca\"}"), &input)
+    json.NewDecoder(res.Body).Decode(&input)
 
     if err := v.Validate(input); err != nil {
-      log.Printf("%s%s %s", red("❌"), red(test.Url), err);
-      done <- true
+      log.Printf("%s %s %s", red("✗"), red(test.Url), err);
+      done <- false
       return
     }
   }
