@@ -1,0 +1,25 @@
+host: www.reddit.com
+schema: https
+tests:
+- url: /v1/status/artist
+  should:
+    match_json_schema: Person.schema.json
+
+- url: /v1/status/artist
+  should:
+    have_status: 200
+
+- url: /v1/status/artist
+  should:
+    have_status: 200
+    match_json_schema: Person.schema.json
+
+- url: /v1/status/artist
+  should:
+    have_status: 200
+    match_json_schema: Person.schema.json
+
+- url: /v1/status/artist
+  should:
+    have_status: 200
+    match_json_schema: Person.schema.json
