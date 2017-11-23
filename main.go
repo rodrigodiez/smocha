@@ -36,7 +36,7 @@ var yellow = color.New(color.FgYellow).SprintFunc();
 func main() {
   filename := flag.String("testbook", "testbook.yml", "testbook file");
 
-	configor.Load(&testbook, *filename)
+	configor.New(&configor.Config{ENVPrefix: "SMOCHA"}).Load(&testbook, *filename)
   done := make(chan bool, len(testbook.Tests));
 
   for i := range testbook.Tests {
