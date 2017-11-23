@@ -8,7 +8,8 @@ At the moment the features of Smocha are rather simple. It allows:
 
 - Concurrent tests using _goroutines_
 - HTTP / HTTPS GET requests
-- Validate the status code of the response
+- Check the status code of the response
+- Check that the response contains a string
 - Match the JSON of the response against a _Json Schema_ file
 - stdout / stderr logging
 - error exit code on failed tests
@@ -22,6 +23,7 @@ tests:
 - url: /
   should:
     have_status: 200
+    contain: success!
 
 - url: /json-endpoint
   should:

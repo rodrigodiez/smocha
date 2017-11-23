@@ -9,6 +9,8 @@ import (
   "os"
   "log"
   "encoding/json"
+  "io/ioutil"
+  "strings"
   jsonSchema "github.com/lestrrat/go-jsschema"
   jsonValBuilder "github.com/lestrrat/go-jsval/builder"
 )
@@ -16,8 +18,10 @@ import (
 type Test struct {
   Url string
   Should struct {
+    Contain string
     HaveStatus int `yaml:"have_status"`
     MatchJsonSchema string `yaml:"match_json_schema"`
+
   }
 }
 
@@ -59,6 +63,9 @@ func test(test Test, host string, schema string, done chan bool) {
     return
   }
 
+  bodyBytes, err := ioutil.ReadAll(res.Body)
+  defer res.Body.Close()
+
   if(test.Should.HaveStatus != 0) {
 
     if res.StatusCode != test.Should.HaveStatus {
@@ -87,10 +94,19 @@ func test(test Test, host string, schema string, done chan bool) {
     }
 
     var input interface{};
-    json.NewDecoder(res.Body).Decode(&input)
+    json.Unmarshal(bodyBytes, &input);
 
     if err := v.Validate(input); err != nil {
       log.Printf("%s %s %s", red("✗"), red(test.Url), err);
+      done <- false
+      return
+    }
+  }
+
+  if(test.Should.Contain != "") {
+    bodyString := string(bodyBytes)
+    if false == strings.Contains(bodyString, test.Should.Contain) {
+      log.Printf("%s %s %s '%s'", red("✗"), red(test.Url), "response does not contain", test.Should.Contain);
       done <- false
       return
     }
