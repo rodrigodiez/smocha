@@ -1,16 +1,17 @@
 package main
 
 import (
+  "encoding/json"
   "flag"
   "fmt"
   "github.com/jinzhu/configor"
   "github.com/fatih/color"
+  "io/ioutil"
+  "log"
   "net/http"
   "os"
-  "log"
-  "encoding/json"
-  "io/ioutil"
   "strings"
+  "time"
   jsonSchema "github.com/lestrrat/go-jsschema"
   jsonValBuilder "github.com/lestrrat/go-jsval/builder"
 )
@@ -28,6 +29,7 @@ type Test struct {
 type Testbook struct {
   Host string
   Schema string
+  Rate int `default:"30"`
   Tests []Test
 }
 
@@ -42,8 +44,11 @@ func main() {
 
 	configor.New(&configor.Config{ENVPrefix: "SMOCHA"}).Load(&testbook, *filename)
   done := make(chan bool, len(testbook.Tests));
+  throttle := time.Tick(time.Second / time.Duration(testbook.Rate));
+
 
   for i := range testbook.Tests {
+    <-throttle
     go test(testbook.Tests[i], testbook.Host, testbook.Schema, done);
   }
 
