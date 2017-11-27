@@ -24,7 +24,12 @@ func main() {
 	filename := flag.String("testbook", "testbook.yml", "a testbook file")
 	flag.Parse()
 
+	if _, err := os.Stat(*filename); err != nil {
+		defer os.Exit(1)
+	}
+
 	configor.New(&configor.Config{ENVPrefix: "SMOCHA"}).Load(&testbook, *filename)
+
 	ch := make(chan bool, len(testbook.Tests))
 	throttle := time.Tick(time.Second / time.Duration(testbook.Rate))
 
