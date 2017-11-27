@@ -44,27 +44,33 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 	res, err := http.Get(fmt.Sprintf("%s://%s%s", schema, host, test.Url))
 
 	if err != nil {
-		log.Printf("%s%s %s", red("✗"), red(test.Url), err)
+		printErr(test, err)
 		ch <- false
 		return
 	}
 
 	if test.Should.HaveStatus != 0 {
-		if false == validate.Status(res, test) {
+		result, err := validate.Status(res, test)
+		if result == false {
+			printErr(test, err)
 			ch <- false
 			return
 		}
 	}
 
 	if test.Should.MatchJsonSchema != "" {
-		if false == validate.MatchJsonSchema(res, test) {
+		result, err := validate.MatchJsonSchema(res, test)
+		if result == false {
+			printErr(test, err)
 			ch <- false
 			return
 		}
 	}
 
 	if test.Should.Contain != "" {
-		if false == validate.Contain(res, test) {
+		result, err := validate.Contain(res, test)
+		if result == false {
+			printErr(test, err)
 			ch <- false
 			return
 		}
@@ -72,4 +78,8 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 
 	fmt.Printf("%s %s\n", green("✔"), green(test.Url))
 	ch <- true
+}
+
+func printErr(test types.Test, err error) {
+	log.Printf("%s%s %s", red("✗"), red(test.Url), err)
 }
