@@ -12,9 +12,9 @@ At the moment the features of Smocha are rather simple. It allows:
 - Check the status code of the response
 - Check that the response contains a string
 - Match the JSON of the response against a _Json Schema_ file
-- stdout / stderr logging
-- error exit code on failed tests
-- allow overrides using environment variables
+- Sensible stdout/stderr logging
+- Non-zero exit code on failed tests
+- Allow overrides of YAML values using environment variables
 
 # Testbook example
 ```yaml
