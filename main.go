@@ -46,7 +46,7 @@ func main() {
   done := make(chan bool, len(testbook.Tests));
   throttle := time.Tick(time.Second / time.Duration(testbook.Rate));
 
-  log.Printf("Starting %s tests on %s at %s requests per second", yellow(testbook.Schema), yellow(testbook.Host), yellow(testbook.Rate));
+  fmt.Printf("Starting %s tests on %s at %s requests per second\n", yellow(testbook.Schema), yellow(testbook.Host), yellow(testbook.Rate));
 
   for i := range testbook.Tests {
     <-throttle
@@ -118,6 +118,6 @@ func test(test Test, host string, schema string, done chan bool) {
     }
   }
 
-  log.Printf("%s %s", green("✔"), green(test.Url));
+  fmt.Printf("%s %s\n", green("✔"), green(test.Url));
   done <- true
 }
