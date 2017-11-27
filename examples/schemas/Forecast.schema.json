@@ -1,0 +1,19 @@
+{
+  "title": "Forecast",
+  "type": "object",
+  "properties": {
+    "coord": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        }
+      },
+      "required": ["lat", "lon"]
+    }
+  },
+  "required": ["coord"]
+}
