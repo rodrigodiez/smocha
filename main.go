@@ -19,6 +19,8 @@ var red = color.New(color.FgRed).SprintFunc()
 var yellow = color.New(color.FgYellow).SprintFunc()
 
 func main() {
+	var failedTests = 0
+
 	filename := flag.String("testbook", "testbook.yml", "a testbook file")
 	flag.Parse()
 
@@ -35,9 +37,12 @@ func main() {
 
 	for _ = range testbook.Tests {
 		if ok := <-ch; ok == false {
+			failedTests++
 			defer os.Exit(1)
 		}
 	}
+
+	fmt.Printf("%d tests (%s, %s)\n", len(testbook.Tests), green(fmt.Sprintf("%d passed", len(testbook.Tests)-failedTests)), red(fmt.Sprintf("%d failed", failedTests)))
 }
 
 func test(test types.Test, host string, schema string, ch chan bool) {
