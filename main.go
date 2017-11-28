@@ -86,6 +86,15 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 		}
 	}
 
+	if len(test.Should.HaveHeaders) > 0 {
+		result, err := validate.HaveHeaders(res, test)
+		if result == false {
+			printErr(test, err)
+			ch <- false
+			return
+		}
+	}
+
 	fmt.Printf("%s %s\n", green("✔"), green(test.Url))
 	ch <- true
 }
