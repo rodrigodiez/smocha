@@ -11,6 +11,7 @@ At the moment the features of Smocha are rather simple. It allows:
 - HTTP / HTTPS GET requests
 - Check the status code of the response
 - Check that the response contains a string
+- Check that the response contains some headers
 - Match the JSON of the response against a _Json Schema_ file
 - Sensible stdout/stderr logging
 - Non-zero exit code on failed tests
@@ -25,7 +26,10 @@ tests:
 - url: /
   should:
     have_status: 200
-    contain: success!
+    contain: success
+    have_headers:
+      - { name: 'Content-Type', value: 'application/javascript'}
+      - { name: 'X-Custom-Header', value: 'foo'}
 
 - url: /json-endpoint
   should:
@@ -34,9 +38,15 @@ tests:
 ```
 
 # Installation
+## Go get
 ```
 go get -u github.com/rodrigodiez/smocha
 ```
+## Binary download
+Binaries for Linux, macOS and Windows are available in the [Releases](https://github.com/rodrigodiez/smocha/releases) section of this repository
+
+## Brew
+Brew installation is not available yet but it will be ready soon. Check [#6](https://github.com/rodrigodiez/smocha/issues/6) for updated details
 
 # Running Smocha
 ```bash
