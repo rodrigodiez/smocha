@@ -1,7 +1,7 @@
 # Smocha
-[![Build Status](https://travis-ci.org/rodrigodiez/smocha.svg?branch=1.2.0)](https://travis-ci.org/rodrigodiez/smocha)
+[![Build Status](https://travis-ci.org/rodrigodiez/smocha.svg?branch=1.2.0)](https://travis-ci.org/rodrigodiez/smocha) [![Latest release](https://img.shields.io/github/tag/rodrigodiez/smocha.svg?label=latest)](https://github.com/rodrigodiez/smocha/releases/latest)
 
-Smocha is a http [smoke tests](https://en.wikipedia.org/wiki/Smoke_testing_(software)) runner focused on simplicity, readability, and speed.
+Smocha is an http [smoke tests](https://en.wikipedia.org/wiki/Smoke_testing_(software)) runner focused on simplicity, readability, and speed.
 
 In Smocha, tests are defined within _yaml_ files called _testbooks_ that describe an http request and the requirements for the response that comes back.
 
