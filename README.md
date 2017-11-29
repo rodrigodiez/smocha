@@ -7,11 +7,12 @@ In Smocha, tests are defined within _yaml_ files called _testbooks_ that describ
 
 This _configuration over code_ approach helps not only to standardize procedures and terminology across teams but also to better understand a test suite at a glance.
 
-> Smocha is under heavy development at the moment and while we adhere to [Semantic versioning](https://semver.org/) there are plans to update the _testbook_ yaml structure in the next major version. Bear this in mind when updating your Smocha binary since your old _testbooks_ may stop working properly. Please read [#6](https://github.com/rodrigodiez/smocha/issues/7) for more details
-
 ![Smocha run](docs/assets/smocha-run.png)
 
 Smocha is written in [Go](https://golang.org/) and inspired by so many other projects such as [Cucumber](https://cucumber.io/) and [Ansible](https://www.ansible.com/).
+
+> Smocha is under heavy development at the moment and while we adhere to [Semantic versioning](https://semver.org/) there are plans to update the _testbook_ yaml structure in the next major version. Bear this in mind when updating your Smocha binary since your old _testbooks_ may stop working properly. Please read [#6](https://github.com/rodrigodiez/smocha/issues/7) for more details
+
 
 # Features
 - Concurrent, throttled http(s) tests
