@@ -1,3 +1,5 @@
 dist/
 vendor/
+
 Gopkg.lock
+smocha

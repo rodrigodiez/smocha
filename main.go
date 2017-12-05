@@ -3,17 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/jinzhu/configor"
-	"github.com/rodrigodiez/smocha/types"
-	"github.com/rodrigodiez/smocha/validate"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/fatih/color"
+	"github.com/jinzhu/configor"
 )
 
-var testbook types.Testbook
+var testbook Testbook
 var green = color.New(color.FgGreen).SprintFunc()
 var red = color.New(color.FgRed).SprintFunc()
 var yellow = color.New(color.FgYellow).SprintFunc()
@@ -50,17 +49,18 @@ func main() {
 	fmt.Printf("%d tests (%s, %s)\n", len(testbook.Tests), green(fmt.Sprintf("%d passed", len(testbook.Tests)-failedTests)), red(fmt.Sprintf("%d failed", failedTests)))
 }
 
-func test(test types.Test, host string, schema string, ch chan bool) {
-	res, err := http.Get(fmt.Sprintf("%s://%s%s", schema, host, test.Url))
+func test(test Test, host string, schema string, ch chan bool) {
+	res, err := http.Get(fmt.Sprintf("%s://%s%s", schema, host, test.URL))
 
 	if err != nil {
 		printErr(test, err)
 		ch <- false
 		return
 	}
+	validator := NewResponseValidator(res)
 
 	if test.Should.HaveStatus != 0 {
-		result, err := validate.Status(res, test)
+		result, err := validator.HasStatus(test.Should.HaveStatus)
 		if result == false {
 			printErr(test, err)
 			ch <- false
@@ -68,8 +68,15 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 		}
 	}
 
-	if test.Should.MatchJsonSchema != "" {
-		result, err := validate.MatchJsonSchema(res, test)
+	if test.Should.MatchesJSONSchema != "" {
+		file, err := os.Open(test.Should.MatchesJSONSchema)
+
+		if err != nil {
+			printErr(test, err)
+			ch <- false
+			return
+		}
+		result, err := validator.MatchesJSONSchema(file)
 		if result == false {
 			printErr(test, err)
 			ch <- false
@@ -78,7 +85,7 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 	}
 
 	if test.Should.Contain != "" {
-		result, err := validate.Contain(res, test)
+		result, err := validator.Contains(test.Should.Contain)
 		if result == false {
 			printErr(test, err)
 			ch <- false
@@ -87,7 +94,7 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 	}
 
 	if len(test.Should.HaveHeaders) > 0 {
-		result, err := validate.HaveHeaders(res, test)
+		result, err := validator.HasHeaders(test.Should.HaveHeaders)
 		if result == false {
 			printErr(test, err)
 			ch <- false
@@ -95,10 +102,10 @@ func test(test types.Test, host string, schema string, ch chan bool) {
 		}
 	}
 
-	fmt.Printf("%s %s\n", green("✔"), green(test.Url))
+	fmt.Printf("%s %s\n", green("✔"), green(test.URL))
 	ch <- true
 }
 
-func printErr(test types.Test, err error) {
-	log.Printf("%s%s %s", red("✗"), red(test.Url), err)
+func printErr(test Test, err error) {
+	log.Printf("%s%s %s", red("✗"), red(test.URL), err)
 }
