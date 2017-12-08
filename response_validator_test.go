@@ -13,17 +13,17 @@ func TestHasStatus(t *testing.T) {
 }
 
 func TestMatchesJSONSchema(t *testing.T) {
-	t.Run("Matches schema", testMatchesJSONSchemaFunc(`{"title":"Foo","type":"object","properties":{"bar":{"type":"string"}},"required":["bar"]}`, `{"bar":"baz"}`, true, false))
-	t.Run("Does not match schema", testMatchesJSONSchemaFunc(`{"title":"Foo","type":"object","properties":{"bar":{"type":"string"}},"required":["bar"]}`, `{"qux":"baz"}`, false, true))
-	t.Run("Invalid schema", testMatchesJSONSchemaFunc(`this is not a schema`, `{"bar":"baz"}`, false, true))
+	t.Run("JSON matches schema", testMatchesJSONSchemaFunc(`{"title":"Foo","type":"object","properties":{"bar":{"type":"string"}},"required":["bar"]}`, `{"bar":"baz"}`, true, false))
+	t.Run("JSON does not match schema", testMatchesJSONSchemaFunc(`{"title":"Foo","type":"object","properties":{"bar":{"type":"string"}},"required":["bar"]}`, `{"qux":"baz"}`, false, true))
+	t.Run("Schema is invalid", testMatchesJSONSchemaFunc(`this is not a schema`, `{"bar":"baz"}`, false, true))
 }
 
 func TestHasHeaders(t *testing.T) {
-	t.Run("Header present, right value", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}}, map[string]string{"Foo": "Bar"}, true, false))
-	t.Run("Headers present, right values", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}, {Name: "Baz", Value: "Qux"}}, map[string]string{"Foo": "Bar", "Baz": "Qux"}, true, false))
-	t.Run("Header present, wrong value", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}}, map[string]string{"Foo": "Qux"}, false, true))
-	t.Run("Headers present, some wrong value", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}, {Name: "Baz", Value: "Qux"}}, map[string]string{"Foo": "NaN", "Baz": "Qux"}, false, true))
-	t.Run("Header not present", testHasHeadersFunc([]Header{{Name: "Baz", Value: "Qux"}}, map[string]string{"Foo": "Bar"}, false, true))
+	t.Run("Header is present, right value", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}}, map[string]string{"Foo": "Bar"}, true, false))
+	t.Run("Headers are present, right values", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}, {Name: "Baz", Value: "Qux"}}, map[string]string{"Foo": "Bar", "Baz": "Qux"}, true, false))
+	t.Run("Header are present, wrong value", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}}, map[string]string{"Foo": "Qux"}, false, true))
+	t.Run("Headers are present, some wrong values", testHasHeadersFunc([]Header{{Name: "Foo", Value: "Bar"}, {Name: "Baz", Value: "Qux"}}, map[string]string{"Foo": "NaN", "Baz": "Qux"}, false, true))
+	t.Run("Header is not present", testHasHeadersFunc([]Header{{Name: "Baz", Value: "Qux"}}, map[string]string{"Foo": "Bar"}, false, true))
 }
 
 func TestContains(t *testing.T) {

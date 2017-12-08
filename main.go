@@ -69,14 +69,14 @@ func test(test Test, host string, schema string, ch chan bool) {
 	}
 
 	if test.Should.MatchesJSONSchema != "" {
-		file, err := os.Open(test.Should.MatchesJSONSchema)
+		reader, err := os.Open(test.Should.MatchesJSONSchema)
 
 		if err != nil {
 			printErr(test, err)
 			ch <- false
 			return
 		}
-		result, err := validator.MatchesJSONSchema(file)
+		result, err := validator.MatchesJSONSchema(reader)
 		if result == false {
 			printErr(test, err)
 			ch <- false

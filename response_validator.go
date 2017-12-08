@@ -25,7 +25,7 @@ func NewResponseValidator(res *http.Response) *ResponseValidator {
 }
 
 // HasStatus checks whether the Response has a given status code
-func (r ResponseValidator) HasStatus(status int) (bool, error) {
+func (r *ResponseValidator) HasStatus(status int) (bool, error) {
 
 	if r.response.StatusCode != status {
 		return false, errors.New(fmt.Sprintf("status code %d was expected but got %d instead", status, r.response.StatusCode))
@@ -36,7 +36,7 @@ func (r ResponseValidator) HasStatus(status int) (bool, error) {
 
 // MatchesJSONSchema checks whether the Response body matches the Json schema
 // defined in a given file
-func (r ResponseValidator) MatchesJSONSchema(in io.Reader) (bool, error) {
+func (r *ResponseValidator) MatchesJSONSchema(in io.Reader) (bool, error) {
 	schema, err := jsonSchema.Read(in)
 	if err != nil {
 		return false, err
@@ -65,7 +65,7 @@ func (r ResponseValidator) MatchesJSONSchema(in io.Reader) (bool, error) {
 
 // HasHeaders checks whether the Response has all the provided headers with
 // their values
-func (r ResponseValidator) HasHeaders(headers []Header) (bool, error) {
+func (r *ResponseValidator) HasHeaders(headers []Header) (bool, error) {
 
 	for i := range headers {
 		expectedHeader := headers[i]
@@ -84,7 +84,7 @@ func (r ResponseValidator) HasHeaders(headers []Header) (bool, error) {
 }
 
 // Contains checks whether the response body contains a given string
-func (r ResponseValidator) Contains(needle string) (bool, error) {
+func (r *ResponseValidator) Contains(needle string) (bool, error) {
 
 	bodyBytes, _ := ioutil.ReadAll(r.response.Body)
 	defer r.response.Body.Close()
